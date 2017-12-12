@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Kevin Locke",
+      "copyrightText": "Copyright {years} {companyName} <{email}>\nThis file is part of {projectName},\npublicly available under the {licenseName}.  See {licenseFile} for details.",
+      "variables": {
+        "email": "kevin@kevinlocke.name",
+        "licenseName": "MIT License",
+        "licenseFile": "LICENSE.txt",
+        "projectName": "KevinLocke.VisualStudio.GlobalDataSetGenerators",
+        "years": "2017"
+      }
+    }
+  }
+}

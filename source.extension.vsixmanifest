@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="KevinLocke.VisualStudio.GlobalDataSetGenerators.ddbcd7e9-5966-4383-a7a4-3c4e6c6b2dec" Version="1.0" Language="en-US" Publisher="Kevin Locke" />
+        <DisplayName>Typed DataSet Generator for the Global Namespace</DisplayName>
+        <Description>A wrapper for MSDataSetGenerator, which ships with Visual Studio for generating Strongly Typed DataSets from XSD files, that adds support for generating to the global (i.e. default, unnamed) namespace.  The author of this extension does not encourage use of the global namespace, but recognizes it can be necessary (e.g. for backwards-compatibility) and provides this extension for those purposes.</Description>
+        <MoreInfo>https://github.com/kevinoid/KevinLocke.VisualStudio.GlobalDataSetGenerators</MoreInfo>
+        <License>LICENSE.txt</License>
+        <Tags>C#; CodeGenerator; DataSet; Typed DataSet; XSD</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+</PackageManifest>
