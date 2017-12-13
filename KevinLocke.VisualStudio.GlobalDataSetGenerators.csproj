@@ -55,6 +55,7 @@
   <PropertyGroup Condition="'$(CI)' == 'True'">
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DeployExtension>False</DeployExtension>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GlobalDataSetGenerator.cs" />
