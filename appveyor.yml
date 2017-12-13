@@ -13,6 +13,9 @@ cache:
   # NuGet v3
   - '%LocalAppData%\NuGet\v3-cache'
 
+before_build:
+  - nuget restore
+
 build:
   # enable MSBuild parallel builds
   parallel: true
