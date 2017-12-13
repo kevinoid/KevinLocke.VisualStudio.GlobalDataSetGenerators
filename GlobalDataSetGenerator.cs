@@ -7,20 +7,19 @@
 namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Globalization;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using System.Text;
     using System.Text.RegularExpressions;
+    using EnvDTE;
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.Win32;
     using VSLangProj80;
+    using VSOLE = Microsoft.VisualStudio.OLE.Interop;
 
     /// <summary>
     /// An <see cref="IVsSingleFileGenerator"/> for generating a Typed DataSet
@@ -46,7 +45,6 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         RegisterUsing = RegistrationMethod.CodeBase)]
     public class GlobalDataSetGenerator : IVsSingleFileGenerator, IVsRefactorNotify, IObjectWithSite
     {
-        private const string MSDataSetGeneratorGuid = "{E76D53CC-3D4F-40a2-BD4D-4F3419755476}";
         private const string TemporaryNamespaceName = "GlobalDataSetGeneratorTempNamespace";
 
         // FIXME: Regex assumes top-level namespaces start and end at the
@@ -54,6 +52,9 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         private static readonly Regex CSharpNamespace = new Regex(
             @"^namespace\s+" + TemporaryNamespaceName + @"(?:\.(\S+))?\s*\{(.*?)^\}",
             RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline);
+
+        private static readonly Guid MSDataSetGeneratorGuid =
+            new Guid("E76D53CC-3D4F-40a2-BD4D-4F3419755476");
 
         private readonly IVsSingleFileGenerator msDataSetGenerator;
         private readonly IVsRefactorNotify msDataSetGeneratorRN;
@@ -343,38 +344,51 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         /// </summary>
         /// <param name="clsid">CLSID of the class to instantiate.</param>
         /// <returns>An instance of a class with the given CLSID.</returns>
-        /// <exception cref="ArgumentException">If <paramref name="clsid"/>
-        /// could not be found.</exception>
-        private static IVsSingleFileGenerator GetGeneratorByClsid(string clsid)
+        /// <exception>If
+        /// <see cref="VSOLE.IServiceProvider.QueryService(ref Guid, ref Guid, out IntPtr)"/>
+        /// fails.</exception>
+        /// <exception cref="InvalidCastException">If <paramref name="clsid"/>
+        /// does not implement <see cref="IVsSingleFileGenerator"/>.</exception>
+        private static IVsSingleFileGenerator GetGeneratorByClsid(Guid clsid)
         {
-            using (RegistryKey visualStudioKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio"))
+            // QueryService returns E_NOINTERFACE (0x80004002) when called on
+            // the VSOLE.IServiceProvider passed to SetSite.  Therefore, use
+            // the DTE instance as the VSOLE.IServiceProvider instead.
+            VSOLE.IServiceProvider oleServiceProvider = null;
+            try
             {
-                SortedDictionary<decimal, string> subKeyByNum = new SortedDictionary<decimal, string>();
-                foreach (string subKeyName in visualStudioKey.GetSubKeyNames())
+                oleServiceProvider =
+                    (VSOLE.IServiceProvider)Package.GetGlobalService(typeof(DTE));
+                using (ServiceProvider serviceProvider = new ServiceProvider(oleServiceProvider))
                 {
-                    if (decimal.TryParse(subKeyName, out decimal version))
-                    {
-                        subKeyByNum.Add(version, subKeyName);
-                    }
-                }
+                    oleServiceProvider = null;
 
-                // Search for CLSID for most recent version of Visual Studio
-                foreach (string version in subKeyByNum.Values)
-                {
-                    string msDataSetGeneratorKeyPath = string.Format(CultureInfo.InvariantCulture, @"{0}\CLSID\{1}", version, clsid);
-                    using (RegistryKey msDataSetGeneratorKey = visualStudioKey.OpenSubKey(msDataSetGeneratorKeyPath))
+                    Marshal.ThrowExceptionForHR(
+                        serviceProvider.QueryService(guid, out object generator));
+                    Debug.Assert(generator != null, "null after QueryService success");
+
+                    try
                     {
-                        if (msDataSetGeneratorKey != null)
+                        return (IVsSingleFileGenerator)generator;
+                    }
+                    catch
+                    {
+                        if (generator is IDisposable disposableGenerator)
                         {
-                            string assemblyName = (string)msDataSetGeneratorKey.GetValue("Assembly");
-                            string className = (string)msDataSetGeneratorKey.GetValue("Class");
-                            return (IVsSingleFileGenerator)Activator.CreateInstance(assemblyName, className).Unwrap();
+                            disposableGenerator.Dispose();
                         }
+
+                        throw;
                     }
                 }
             }
-
-            throw new ArgumentException("Unable to find CLSID " + clsid, "clsid");
+            finally
+            {
+                if (oleServiceProvider is IDisposable disposableProvider)
+                {
+                    disposableProvider.Dispose();
+                }
+            }
         }
 
         /// <summary>
