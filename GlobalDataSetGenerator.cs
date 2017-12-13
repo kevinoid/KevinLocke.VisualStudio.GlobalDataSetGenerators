@@ -68,9 +68,6 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         /// </summary>
         public GlobalDataSetGenerator()
         {
-            // FIXME: Should use Microsoft.VisualStudio.Shell.ServiceProvider
-            // from SetSite to instantiate?  Like
-            // https://github.com/Microsoft/VSSDK-Extensibility-Samples/blob/60803c0/WPFDesigner_XML/WPFDesigner_XML/EditorFactory.cs#L51-L60
             this.msDataSetGenerator = GetGenerator(MSDataSetGeneratorGuid);
             this.msDataSetGeneratorRN = (IVsRefactorNotify)this.msDataSetGenerator;
             this.msDataSetGeneratorSite = (IObjectWithSite)this.msDataSetGenerator;
