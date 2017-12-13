@@ -16,6 +16,8 @@ cache:
 before_build:
   - nuget restore
 
+configuration: Release
+
 build:
   # enable MSBuild parallel builds
   parallel: true
