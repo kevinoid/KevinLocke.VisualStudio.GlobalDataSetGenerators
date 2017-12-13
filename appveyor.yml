@@ -1,0 +1,22 @@
+# http://www.appveyor.com/docs/appveyor-yml
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# build cache to preserve files/folders between builds
+cache:
+  # preserve "packages" directory in the root of build folder
+  # will reset it if packages.config is modified
+  - packages -> **\packages.config
+  # NuGet < v3
+  - '%LocalAppData%\NuGet\Cache'
+  # NuGet v3
+  - '%LocalAppData%\NuGet\v3-cache'
+
+build:
+  # enable MSBuild parallel builds
+  parallel: true
+  project: KevinLocke.VisualStudio.GlobalDataSetGenerators.sln
+
+artifacts:
+  - path: bin\*\*.vsix
