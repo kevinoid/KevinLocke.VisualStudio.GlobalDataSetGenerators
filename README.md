@@ -1,6 +1,8 @@
 Typed DataSet Generator for the Global Namespace
 ================================================
 
+[![Build Status](https://img.shields.io/appveyor/ci/kevinoid/kevinlocke-visualstudio-globaldatasetgenerators/master.svg?style=flat&label=build+status)](https://ci.appveyor.com/project/kevinoid/kevinlocke-visualstudio-globaldatasetgenerators)
+
 This is a project to build a Visual Studio Extension (VSIX) for a [Single File
 Generator](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/implementing-single-file-generators)
 which wraps the bundled MSDataSetGenerator for generating [Strongly Typed
