@@ -69,7 +69,7 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
             // FIXME: Should use Microsoft.VisualStudio.Shell.ServiceProvider
             // from SetSite to instantiate?  Like
             // https://github.com/Microsoft/VSSDK-Extensibility-Samples/blob/60803c0/WPFDesigner_XML/WPFDesigner_XML/EditorFactory.cs#L51-L60
-            this.msDataSetGenerator = GetGeneratorByClsid(MSDataSetGeneratorGuid);
+            this.msDataSetGenerator = GetGenerator(MSDataSetGeneratorGuid);
             this.msDataSetGeneratorRN = (IVsRefactorNotify)this.msDataSetGenerator;
             this.msDataSetGeneratorSite = (IObjectWithSite)this.msDataSetGenerator;
         }
@@ -340,16 +340,16 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         }
 
         /// <summary>
-        /// Instantiates an <see cref="IVsSingleFileGenerator"/> by CLSID.
+        /// Instantiates an <see cref="IVsSingleFileGenerator"/> by GUID.
         /// </summary>
-        /// <param name="clsid">CLSID of the class to instantiate.</param>
-        /// <returns>An instance of a class with the given CLSID.</returns>
+        /// <param name="guid">GUID of the class to instantiate.</param>
+        /// <returns>An instance of <paramref name="guid"/>.</returns>
         /// <exception>If
         /// <see cref="VSOLE.IServiceProvider.QueryService(ref Guid, ref Guid, out IntPtr)"/>
         /// fails.</exception>
-        /// <exception cref="InvalidCastException">If <paramref name="clsid"/>
+        /// <exception cref="InvalidCastException">If <paramref name="guid"/>
         /// does not implement <see cref="IVsSingleFileGenerator"/>.</exception>
-        private static IVsSingleFileGenerator GetGeneratorByClsid(Guid clsid)
+        private static IVsSingleFileGenerator GetGenerator(Guid guid)
         {
             // QueryService returns E_NOINTERFACE (0x80004002) when called on
             // the VSOLE.IServiceProvider passed to SetSite.  Therefore, use
