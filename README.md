@@ -10,6 +10,18 @@ DataSets](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-
 to add support for generating `DataSet`s in the global (i.e. default, unnamed)
 namespace.
 
+## Usage
+
+To use the Single File Generator from this project:
+
+1. Install the [latest build of the Visual Studio
+  extension](https://ci.appveyor.com/api/projects/kevinoid/kevinlocke-visualstudio-globaldatasetgenerators/artifacts/bin%2FRelease%2FKevinLocke.VisualStudio.GlobalDataSetGenerators.vsix)
+2. Open a project and select a DataSet XSD file in the Solution Explorer.
+3. In Properties, change "Custom Tool" to "GlobalNamespaceDataSetGenerator".
+   ("Custom Tool Namespace" is ignored and can be set to any value.)
+4. Build the project or right-click on the XSD file and select "Run Custom
+   Tool".
+
 ## Why not use MSDataSetGenerator directly?
 
 There are at least two problems using MSDataSetGenerator in the global
