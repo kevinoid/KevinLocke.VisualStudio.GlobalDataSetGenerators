@@ -43,7 +43,7 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
     [ProvideObject(
         typeof(GlobalDataSetGenerator),
         RegisterUsing = RegistrationMethod.CodeBase)]
-    public class GlobalDataSetGenerator : IVsSingleFileGenerator, IVsRefactorNotify, IObjectWithSite
+    public class GlobalDataSetGenerator : IVsSingleFileGenerator, IVsRefactorNotify, IObjectWithSite, IDisposable
     {
         private const string TemporaryNamespaceName = "GlobalDataSetGeneratorTempNamespace";
 
@@ -60,6 +60,8 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
         private readonly IVsRefactorNotify msDataSetGeneratorRN;
         private readonly IObjectWithSite msDataSetGeneratorSite;
 
+        private bool disposedValue = false;
+
         /// <summary>
         /// Initializes a new instance of the
         /// <see cref="GlobalDataSetGenerator"/> class.
@@ -72,6 +74,15 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
             this.msDataSetGenerator = GetGenerator(MSDataSetGeneratorGuid);
             this.msDataSetGeneratorRN = (IVsRefactorNotify)this.msDataSetGenerator;
             this.msDataSetGeneratorSite = (IObjectWithSite)this.msDataSetGenerator;
+        }
+
+        /// <summary>
+        /// Releases the resources owned by this generator.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -304,6 +315,28 @@ namespace KevinLocke.VisualStudio.GlobalDataSetGenerators
                 rgszParamIndexes,
                 rgszRQTypeNames,
                 rgszParamNames);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged (and optionally managed) resources owned by
+        /// this generator.
+        /// </summary>
+        /// <remarks>Part of the
+        /// <see cref="!:https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern">Dispose
+        /// Pattern</see></remarks>
+        /// <param name="disposing">Called from <see cref="Dispose()"/>.
+        /// Release managed resources in addition to unmanaged.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    ((IDisposable)this.msDataSetGenerator).Dispose();
+                }
+
+                this.disposedValue = true;
+            }
         }
 
 #pragma warning restore SA1615 // Element return value must be documented
