@@ -52,6 +52,9 @@
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(CI)' == 'True'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="GlobalDataSetGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
